@@ -1,15 +1,15 @@
 @echo off
 setlocal enabledelayedexpansion
 color 0A
-title PENDRIVE_TOOLS
+title MENU DE GESTÃO DE DISPOSITIVOS
 
 :menu_inicio
 cls
 echo =============================================
-echo            PENDRIVE_TOOLS -KOSURS 
+echo         PENDRIVE TOOLS BY KOSURS
 echo =============================================
 echo.
-echo Escolha o idioma da TOOL:
+echo Escolha o idioma do MENU:
 echo 1. Portugues
 echo 2. English
 set /p idioma=Escolha uma opcao: 
@@ -64,7 +64,7 @@ if "%escolha%"=="1" (
 :reformatar
 cls
 echo =============================================
-echo         FORMATADOR DE DISPOSITIVOS 
+echo                    FORMAT
 echo =============================================
 echo.
 echo Listando todos os dispositivos com armazenamento...
@@ -136,7 +136,7 @@ if /I not "%confirmar%"=="S" (
 
 echo.
 echo FORMATANDO a unidade %unidadeselecionada% em %sistema% com o nome "%nomevol%"...
-format %unidadeselecionada% /FS:%sistema% /Q /V:%nomevol%
+powershell -NoLogo -Command "Get-Volume -DriveLetter '%unidadeselecionada:~0,1%' | Format-Volume -FileSystem %sistema% -NewFileSystemLabel '%nomevol%' -Confirm:$false -Force"
 
 echo.
 echo ✅ Formatacao concluida!
