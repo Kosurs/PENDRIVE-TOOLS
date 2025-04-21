@@ -20,7 +20,7 @@
 - User-friendly terminal interface with numbered menus
 
 # USAGE
-you can find it [here]()
+you can find it [here](https://github.com/Kosurs/PENDRIVE-TOOLS/blob/main/PENDRIVE_TOOLS.bat)
 
 - Download or clone this repository.
 - Run the .bat file (it works without admin perms)
