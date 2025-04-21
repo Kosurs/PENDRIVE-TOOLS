@@ -19,6 +19,14 @@
 - Integrity check using `chkdsk` and status reporting via PowerShell.
 - User-friendly terminal interface with numbered menus
 
+# USAGE
+you can find it [here]()
+
+-Download or clone this repository.
+-Run the .bat file (it works without admin perms)
+-Follow the interactive menu to select the language, choose your action, and pick the desired device.
+
+
 # Info
 Maybe i should add more functions soon, but for now it will be like that ;)
 
