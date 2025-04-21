@@ -22,9 +22,9 @@
 # USAGE
 you can find it [here]()
 
--Download or clone this repository.
--Run the .bat file (it works without admin perms)
--Follow the interactive menu to select the language, choose your action, and pick the desired device.
+- Download or clone this repository.
+- Run the .bat file (it works without admin perms)
+- Follow the interactive menu to select the language, choose your action, and pick the desired device.
 
 
 # Info
