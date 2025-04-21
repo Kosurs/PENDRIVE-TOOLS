@@ -21,3 +21,8 @@
 
 # Info
 Maybe i should add more functions soon, but for now it will be like that ;)
+
+
+#### ⚠️ DISCLAIMER  
+-Formatting will erase all data on the selected drive.
+-Make sure you select the correct device before proceeding
