@@ -8,8 +8,7 @@
 </head>
 <body>
     <h1 align="center">
-        <img src="https://i.ibb.co/DgtTzwmC/Screenshot-2.png"/> 
-         Sober Fast Flags For Better Graphics
+        <img src="https://i.ibb.co/DgtTzwmC/Screenshot-2.png"/>
     </h1>
  
  simple Batch Script (CMD) tool using PowerShell to format and verify the integrity of pendrives or storage devices connected to your computer
