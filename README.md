@@ -19,5 +19,5 @@
 - Integrity check using `chkdsk` and status reporting via PowerShell.
 - User-friendly terminal interface with numbered menus
 
-
-# 
+# Info
+Maybe i should add more functions soon, but for now it will be like that ;)
