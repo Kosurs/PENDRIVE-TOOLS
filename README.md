@@ -36,7 +36,7 @@
 - Follow the interactive menu to select the language, choose your action, and pick the desired device.
 
 #### LINUX
-- 
+- Follow this step 
 ###### use nano to create the file or download it here
 ```
  nano pendrive_tools.sh
