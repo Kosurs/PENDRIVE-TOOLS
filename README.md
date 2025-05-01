@@ -10,8 +10,20 @@
     <h1 align="center">
         <img src="https://i.ibb.co/DgtTzwmC/Screenshot-2.png"/>
     </h1>
+
+
+     <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1 align="center">
+        <img src="https://i.ibb.co/nsFR4T4h/Captura-de-tela-de-2025-05-01-19-46-50.png"/>
+    </h1>
  
- simple Batch Script (CMD) tool using PowerShell to format and verify the integrity of pendrives or storage devices connected to your computer
+ This is a simple Batch Script (CMD) tool using PowerShell for Windows and a Bash Script for Linux to format and verify the integrity of USB drives or storage devices connected to your computer.
 
 
  # FUNCTIONS
