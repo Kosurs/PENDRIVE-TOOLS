@@ -11,8 +11,6 @@
         <img src="https://i.ibb.co/DgtTzwmC/Screenshot-2.png"/>
     </h1>
 
-
-     <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
