@@ -1,201 +1,182 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal EnableDelayedExpansion
 color 0A
 title MENU DE GESTÃO DE DISPOSITIVOS
 
-:menu_inicio
+:inicio
 cls
 echo =============================================
 echo         PENDRIVE TOOLS BY KOSURS
 echo =============================================
 echo.
-echo Escolha o idioma do MENU:
+echo Escolha o idioma / Choose the language:
 echo 1. Portugues
 echo 2. English
 set /p idioma=Escolha uma opcao: 
 
 if "%idioma%"=="1" (
-    set "idioma=portugues"
+    set "lang=pt"
 ) else if "%idioma%"=="2" (
-    set "idioma=ingles"
+    set "lang=en"
 ) else (
-    echo Opcao invalida! O programa sera encerrado.
+    echo Opcao invalida! Programa encerrado.
     pause
     exit /b
 )
 
-if "%idioma%"=="portugues" (
-    set "msg_opcao=Escolha uma opcao:"
-    set "msg_reformatar=Reformatar dispositivo"
-    set "msg_integridade=Verificar integridade do dispositivo"
-    set "msg_sair=Sair"
+if "%lang%"=="pt" (
+    set "m_opcao=Escolha uma opcao:"
+    set "m_reformatar=Reformatar dispositivo"
+    set "m_verificar=Verificar integridade"
+    set "m_sair=Sair"
+    set "m_confirma=Tem certeza? (S/N):"
+    set "m_nome=Digite o nome do volume:"
+    set "m_sistema=Escolha o sistema de arquivos:"
+    set "m_quick=Usar formatacao rapida (quick)? (S/N):"
+    set "m_finalizado=✅ Operacao concluida!"
 ) else (
-    set "msg_opcao=Choose an option:"
-    set "msg_reformatar=Reformat Device"
-    set "msg_integridade=Check Drive Integrity"
-    set "msg_sair=Exit"
+    set "m_opcao=Choose an option:"
+    set "m_reformatar=Reformat Device"
+    set "m_verificar=Check Integrity"
+    set "m_sair=Exit"
+    set "m_confirma=Are you sure? (Y/N):"
+    set "m_nome=Enter volume label:"
+    set "m_sistema=Choose file system:"
+    set "m_quick=Use quick format? (Y/N):"
+    set "m_finalizado=✅ Operation completed!"
 )
 
-:menu_principal
+:menu
 cls
 echo =============================================
-echo                     MENU    
+echo                  MENU
 echo =============================================
 echo.
-echo %msg_opcao%
-echo 1. %msg_reformatar%
-echo 2. %msg_integridade%
-echo 3. %msg_sair%
-set /p escolha=Escolha uma opcao: 
+echo %m_opcao%
+echo 1. %m_reformatar%
+echo 2. %m_verificar%
+echo 3. %m_sair%
+set /p opcao=
 
-if "%escolha%"=="1" (
-    call :reformatar
-) else if "%escolha%"=="2" (
-    call :verificar_integridade
-) else if "%escolha%"=="3" (
-    echo Operacao cancelada.
-    exit /b
-) else (
-    echo Opcao invalida. Tente novamente.
-    pause
-    goto :menu_principal
-)
+if "%opcao%"=="1" goto :formatar
+if "%opcao%"=="2" goto :verificar
+if "%opcao%"=="3" exit /b
+echo Opcao invalida.
+pause
+goto :menu
 
-:reformatar
+:formatar
 cls
 echo =============================================
-echo                    FORMAT
+echo           %m_reformatar%
 echo =============================================
-echo.
-echo Listando todos os dispositivos com armazenamento...
-echo.
 
-REM Cria um arquivo temporário para guardar os discos (somente DeviceID)
-set "tempfile=%temp%\discos_temp.txt"
+:: Gerar lista de dispositivos
+set "tempfile=%temp%\unidades.txt"
 del "%tempfile%" >nul 2>&1
 
-REM Lista os discos removíveis e fixos usando PowerShell
 powershell -NoLogo -Command ^
-  "$i = 0; Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -eq 2 -or $_.DriveType -eq 3 } | ForEach-Object { "^
-  "$i++; "^
-  "$sizeGB = if ($_.Size) { [math]::Round($_.Size / 1GB, 1) } else { 0 }; "^
-  "$vol = if ($_.VolumeName) { $_.VolumeName } else { 'Sem Nome' }; "^
-  "$fs = if ($_.FileSystem) { $_.FileSystem } else { 'Desconhecido' }; "^
-  "Write-Host ($i.ToString() + '. Unidade: ' + $_.DeviceID + ' | Volume: ' + $vol + ' | Sistema: ' + $fs + ' | Tamanho: ' + $sizeGB + ' GB');" ^
-  "Add-Content -Path '%tempfile%' -Value $_.DeviceID "^
-  "} "
+  "$i=0; Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -eq 2 -or $_.DriveType -eq 3 } | ForEach-Object { $i++;" ^
+  "$size = [math]::Round(($_.Size/1GB),1);" ^
+  "$label = if ($_.VolumeName) { $_.VolumeName } else { 'Sem Nome' };" ^
+  "Write-Host ($i.ToString() + '. Unidade: ' + $_.DeviceID + ' | Volume: ' + $label + ' | Tamanho: ' + $size + ' GB');" ^
+  "Add-Content -Path '%tempfile%' -Value $_.DeviceID }"
 
 echo.
-set /p escolha=Digite o numero do dispositivo que deseja FORMATAR (ou 0 para sair): 
+set /p escolha=Digite o numero do dispositivo (ou 0 para cancelar): 
+if "%escolha%"=="0" goto :menu
 
-if "%escolha%"=="0" (
-    echo Operacao cancelada.
-    pause
-    exit /b
-)
-
-REM Lê o DeviceID correspondente
 set /a linha=%escolha%-1
 set "unidadeselecionada="
 for /f "tokens=*" %%a in ('more +%linha% "%tempfile%"') do (
     set "unidadeselecionada=%%a"
-    goto confirmar
+    goto :fs_select
 )
 
-:confirmar
+:fs_select
+cls
 echo.
-echo ATENCAO: TODOS OS DADOS DA UNIDADE %unidadeselecionada% SERAO APAGADOS!
-echo.
-echo Escolha o sistema de arquivos para formatar:
+echo %m_sistema%
 echo 1. FAT32
 echo 2. NTFS
 echo 3. exFAT
-set /p fsescolhido=Digite o numero correspondente: 
+set /p fsopt=Digite a opcao: 
 
-if "%fsescolhido%"=="1" (
-    set "sistema=FAT32"
-)
-if "%fsescolhido%"=="2" (
-    set "sistema=NTFS"
-)
-if "%fsescolhido%"=="3" (
-    set "sistema=exFAT"
-)
+if "%fsopt%"=="1" set "sistema=FAT32"
+if "%fsopt%"=="2" set "sistema=NTFS"
+if "%fsopt%"=="3" set "sistema=exFAT"
 
-set /p nomevol="Digite o nome do volume (ou deixe vazio para 'LIMPO'): "
+echo.
+set /p nomevol=%m_nome%
 if "%nomevol%"=="" set "nomevol=LIMPO"
 
 echo.
-echo Tem certeza que deseja continuar com a formatação para %sistema% na unidade %unidadeselecionada%?
-set /p confirmar=Tem certeza? (S/N): 
-if /I not "%confirmar%"=="S" (
+set /p usarquick=%m_quick%
+if /I "%usarquick%"=="S" set "quick=quick"
+if /I "%usarquick%"=="Y" set "quick=quick"
+
+echo.
+set /p confirmar=%m_confirma%
+if /I not "%confirmar%"=="S" if /I not "%confirmar%"=="Y" (
     echo Operacao cancelada.
     pause
-    exit /b
+    goto :menu
 )
 
-echo.
-echo FORMATANDO a unidade %unidadeselecionada% em %sistema% com o nome "%nomevol%"...
-powershell -NoLogo -Command "Get-Volume -DriveLetter '%unidadeselecionada:~0,1%' | Format-Volume -FileSystem %sistema% -NewFileSystemLabel '%nomevol%' -Confirm:$false -Force"
+:: Gerar script diskpart
+set "scriptdp=%temp%\formatar_script.txt"
+(
+    echo select volume %unidadeselecionada:~0,1%
+    echo format fs=%sistema% label=%nomevol% %quick%
+    echo assign
+    echo exit
+) > "%scriptdp%"
 
-echo.
-echo ✅ Formatacao concluida!
-pause
-exit /b
-
-:verificar_integridade
 cls
-echo =============================================
-echo     VERIFICACAO DE INTEGRIDADE DO DISPOSITIVO
-echo =============================================
-echo.
-echo Listando todos os dispositivos com armazenamento...
-echo.
+echo Formatando a unidade %unidadeselecionada% com %sistema%...
+diskpart /s "%scriptdp%"
 
-REM Cria um arquivo temporário para guardar os discos (somente DeviceID)
-set "tempfile=%temp%\discos_temp.txt"
+del "%scriptdp%" >nul 2>&1
 del "%tempfile%" >nul 2>&1
 
-REM Lista os discos removíveis e fixos usando PowerShell
+echo.
+echo %m_finalizado%
+pause
+goto :menu
+
+:verificar
+cls
+echo =============================================
+echo       %m_verificar%
+echo =============================================
+
+set "tempfile=%temp%\unidades.txt"
+del "%tempfile%" >nul 2>&1
+
 powershell -NoLogo -Command ^
-  "$i = 0; Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -eq 2 -or $_.DriveType -eq 3 } | ForEach-Object { "^
-  "$i++; "^
-  "$sizeGB = if ($_.Size) { [math]::Round($_.Size / 1GB, 1) } else { 0 }; "^
-  "$vol = if ($_.VolumeName) { $_.VolumeName } else { 'Sem Nome' }; "^
-  "$fs = if ($_.FileSystem) { $_.FileSystem } else { 'Desconhecido' }; "^
-  "$status = if ($_.Status) { $_.Status } else { 'Desconhecido' }; "^
-  "Write-Host ($i.ToString() + '. Unidade: ' + $_.DeviceID + ' | Volume: ' + $vol + ' | Sistema: ' + $fs + ' | Tamanho: ' + $sizeGB + ' GB | Status: ' + $status);" ^
-  "Add-Content -Path '%tempfile%' -Value $_.DeviceID "^
-  "} "
+  "$i=0; Get-CimInstance Win32_LogicalDisk | Where-Object { $_.DriveType -eq 2 -or $_.DriveType -eq 3 } | ForEach-Object { $i++;" ^
+  "$size = [math]::Round(($_.Size/1GB),1);" ^
+  "$label = if ($_.VolumeName) { $_.VolumeName } else { 'Sem Nome' };" ^
+  "Write-Host ($i.ToString() + '. Unidade: ' + $_.DeviceID + ' | Volume: ' + $label + ' | Tamanho: ' + $size + ' GB');" ^
+  "Add-Content -Path '%tempfile%' -Value $_.DeviceID }"
 
 echo.
-set /p escolha=Digite o numero do dispositivo que deseja VERIFICAR (ou 0 para sair): 
+set /p escolha=Digite o numero do dispositivo (ou 0 para cancelar): 
+if "%escolha%"=="0" goto :menu
 
-if "%escolha%"=="0" (
-    echo Operacao cancelada.
-    pause
-    exit /b
-)
-
-REM Lê o DeviceID correspondente
 set /a linha=%escolha%-1
 set "unidadeselecionada="
 for /f "tokens=*" %%a in ('more +%linha% "%tempfile%"') do (
     set "unidadeselecionada=%%a"
-    goto verificar
+    goto :verificar_run
 )
 
-:verificar
-echo Verificando a integridade do dispositivo %unidadeselecionada%...
-
-REM Exibir informações detalhadas sobre o dispositivo
-echo.
-powershell -Command "Get-PhysicalDisk | Where-Object { $_.DeviceID -eq '%unidadeselecionada%' } | Format-List"
-
-REM Usar chkdsk para verificar a integridade do dispositivo
+:verificar_run
+cls
+echo Verificando unidade %unidadeselecionada%...
 chkdsk %unidadeselecionada% /f
 
 echo.
-echo ✅ Verificação Concluída!
+echo %m_finalizado%
 pause
-exit /b
+goto :menu
