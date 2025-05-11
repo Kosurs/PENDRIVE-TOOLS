@@ -45,6 +45,7 @@ chmod +x pendrive_tools.sh
 # Info
 - Maybe i should add more functions soon, but for now it will be like that ;)
 - edit 01/05/25: i added linux support :D, windows one need some fixes for later
+- edit 11/05/25: fixed windows version now working, this time used diskpart
 
 
 >[!WARNING]
